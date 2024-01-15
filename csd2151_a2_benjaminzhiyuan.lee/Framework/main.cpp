@@ -197,6 +197,7 @@ int main(int argc, char** argv)
         {
             checkForOpenGLError(__FILE__, __LINE__);
 
+            pScene->resize(screen.x, screen.y);
             scene.render();
 
             glfwSwapBuffers(pWindow);
