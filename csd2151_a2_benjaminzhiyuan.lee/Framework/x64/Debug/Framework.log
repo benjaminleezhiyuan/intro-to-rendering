@@ -1,14 +1,20 @@
-﻿  main.cpp
-X:\sandbox\intro-to-rendering\csd2151_a2_benjaminzhiyuan.lee\Framework\main.cpp(200,44): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+﻿  cg.cpp
+  debug.cpp
+  program.cpp
+  trianglemeshes.cpp
+  main.cpp
+C:\sandbox\intro-to-rendering\csd2151_a2_benjaminzhiyuan.lee\Framework\main.cpp(200,44): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-X:\sandbox\intro-to-rendering\csd2151_a2_benjaminzhiyuan.lee\Framework\main.cpp(200,34): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\sandbox\intro-to-rendering\csd2151_a2_benjaminzhiyuan.lee\Framework\main.cpp(200,34): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-  Framework.vcxproj -> X:\sandbox\intro-to-rendering\csd2151_a2_benjaminzhiyuan.lee\x64\Debug\Framework.exe
-  X:\sandbox\intro-to-rendering\csd2151_a2_benjaminzhiyuan.lee\x64\Debug\Framework.exe
+  LINK : C:\sandbox\intro-to-rendering\csd2151_a2_benjaminzhiyuan.lee\x64\Debug\Framework.exe not found or not built by the last incremental link; performing full link
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  Framework.vcxproj -> C:\sandbox\intro-to-rendering\csd2151_a2_benjaminzhiyuan.lee\x64\Debug\Framework.exe
+  C:\sandbox\intro-to-rendering\csd2151_a2_benjaminzhiyuan.lee\x64\Debug\Framework.exe
   1 File(s) copied
