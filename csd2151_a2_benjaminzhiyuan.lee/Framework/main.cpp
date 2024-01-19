@@ -1,12 +1,12 @@
 /*!
 @file main.cpp
 @author Vadim Surov (vsurov@digipen.edu)
-@co-author <Your Name> (Your DP Email)
-@course 
-@section 
-@assignent #
+@co-author Benjamin Lee Zhi Yuan (benjaminzhiyuan.lee@digipen.edu)
+@course CSD2151
+@section A
+@assignent 2
 @date 1/7/2024
-@brief 
+@brief Implementation of assignment 2
 */
 #include <iostream>
 
