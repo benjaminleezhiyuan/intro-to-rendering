@@ -65,7 +65,7 @@ void sizeCallback(GLFWwindow* pWindow, int width, int height)
 {
     screen.x = (float)width;
     screen.y = (float)height;
-    std::cout << width << ": " << height << std::endl;
+    //std::cout << width << ": " << height << std::endl;
 }
 
 /*
@@ -197,7 +197,7 @@ int main(int argc, char** argv)
         {
             checkForOpenGLError(__FILE__, __LINE__);
 
-            pScene->resize(screen.x, screen.y);
+            pScene->resize((int)screen.x, (int)screen.y);
             scene.render();
 
             glfwSwapBuffers(pWindow);
