@@ -1,36 +1,41 @@
-/*!*****************************************************************************
-\file unittests_functions.cpp
-\author Vadim Surov (vsurov\@digipen.edu)
-\co-author Benjamin Lee (benjaminzhiyuan.lee\@digipen.edu)
-\par Course: CSD2151
-\par Assignment: 3.1 (RayTracing)
-\date 26/01/2024
-\brief This file has definitions of functions for unit tests.
+/*!
+@file 
+@author Vadim Surov (vsurov@digipen.edu)
+@co-author Benjamin Lee Zhi Yuan (benjaminzhiyuan.lee@digipen.edu)
+@course CSD2151
+@section A 
+@assignent 3.2
+@date 27/1/2024
+@brief Implementation of assignment 3.2
+*/
 
-This code is intended to be completed and submitted by a student,
-so any changes in this file will be used in the evaluation on the VPL server.
-You should not change functions' name and parameter types in provided code.
-*******************************************************************************/
+R"(
+#version 330 core
 
-#include "unittests_functions.h"
+in vec3 TexCoord;
 
-#include <glm/gtx/extended_min_max.hpp>
+uniform vec2 iResolution;   // Viewport resolution (in pixels)
+uniform int renderMode;     // Which render mode to use
 
-#define UNUSED(x) (void)x;
+layout(location=0) out vec4 FragColor;
 
-template <typename T>
-T min(T a, T b) { return glm::min(a, b); }
+struct Light
+{
+    vec3 position;
+};
 
-template <typename T>
-T max(T a, T b) { return glm::max(a, b); }
+struct Ray
+{
+    vec3 origin;
+    vec3 direction; // Normilized
+};
 
-template <typename T>
-T abs(T a) { return glm::abs(a); }
+struct Sphere
+{
+    vec3 center;
+    float radius;
+};
 
-#include "unittests_data.h"
-
-// Return the shortest non-negative time of intersection the ray and the sphere.
-// Return 0.0f when there is no intersection
 float time_intersect_ray_sphere(Ray ray, Sphere sphere)
 {
     // Ray origin
@@ -76,14 +81,29 @@ float time_intersect_ray_sphere(Ray ray, Sphere sphere)
 
         return (t >= 0.0f) ? t : 0.0f;
     }
+
+    return 0.0f;
 }
 
-// Calculate the shade value and use it to set the traced color.
-// Return vec3(0.0f, 0.0f, 0.0f), when the ray hits the background.
-// Otherwise, calculate the shade value based on the normal and the light source
-// position using Lambert's Cosine Law. Set up the value as R, G, and B components
-// of the return value.
-// To apply an ambient light contribution set 0.1f as the smallest value of the shade
+//For mode 1
+vec3 rayTracing(Ray ray, Sphere sphere)
+{
+    float t = time_intersect_ray_sphere(ray, sphere);
+
+    vec3 finalColor = vec3(0.0f);
+
+    if (t>0.0f)
+    {
+        vec3 hitpos = ray.origin + t * ray.direction;
+        vec3 n = normalize(hitpos - sphere.center);
+
+        finalColor = abs(vec3(n.z,n.z,n.z));       
+    }
+
+    return finalColor;
+}
+
+//For mode 2
 vec3 rayTracing(Ray ray, Sphere sphere, Light light)
 {
     // Calculate the intersection time
@@ -116,3 +136,20 @@ vec3 rayTracing(Ray ray, Sphere sphere, Light light)
 
     return shade;
 }
+
+void main()
+{
+    vec2 uv = (gl_FragCoord.xy * 2.0f - iResolution.xy) / iResolution.y;
+    vec3 xyz = vec3(uv, -1.0f);
+    vec3 direction = normalize(xyz); 
+    Ray ray = Ray(vec3(0.0f), direction);
+    Sphere sphere = Sphere(vec3(0.0f, 0.0f, -2.5f), 1.0f);
+    Light light = Light(vec3(10.0f, 10.0f, 10.0f));
+
+    if(renderMode == 1)
+    FragColor = vec4(rayTracing(ray, sphere), 1.0f);
+
+    if(renderMode == 2)
+    FragColor = vec4(rayTracing(ray, sphere, light), 1.0f);
+}
+)"

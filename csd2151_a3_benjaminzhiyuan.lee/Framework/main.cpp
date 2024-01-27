@@ -4,9 +4,9 @@
 @co-author Benjamin Lee Zhi Yuan (benjaminzhiyuan.lee@digipen.edu)
 @course CSD2151
 @section A
-@assignent 
-@date 1/7/2024
-@brief Implementation of assignment 
+@assignent 3.2
+@date 27/1/2024
+@brief Implementation of assignment 3.2
 */
 #include <iostream>
 
@@ -16,6 +16,8 @@
 #include <GLFW/glfw3.h>
 
 cg::Scene* pScene = nullptr;
+glm::vec2 screen(WIDTH, HEIGHT);
+int mode = 1;
 
 /*
    This function serves as the callback parameter for 
@@ -26,8 +28,14 @@ cg::Scene* pScene = nullptr;
 void keyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods)
 {
     if (action == GLFW_PRESS)
+    {
         if (key == GLFW_KEY_ESCAPE)
             glfwSetWindowShouldClose(pWindow, GL_TRUE);
+        if (key == GLFW_KEY_1)
+            mode = 1;
+        if (key == GLFW_KEY_2)
+            mode = 2;
+    }
 }
 
 /*
@@ -63,7 +71,8 @@ void scrollCallback(GLFWwindow* pWindow, double xoffset, double yoffset)
 */
 void sizeCallback(GLFWwindow* pWindow, int width, int height)
 {
-
+    screen.x = (float)width;
+    screen.y = (float)height;
 }
 
 /*
@@ -133,12 +142,12 @@ int main(int argc, char** argv)
         {
             // Vertex shader
             {
-                #include "Framework.vert.glsl"
+                #include "RayTracing.vert.glsl"
             },
 
             // Fragment shader
             {
-                #include "Framework.frag.glsl"
+                #include "RayTracing.frag.glsl"
             },
 
             // Passes
@@ -155,35 +164,38 @@ int main(int argc, char** argv)
                     { },
 
                     // Depth test
-                    ENABLE,
+                    DISABLE,
 
                     // Objects
                     {
-
+                        {
+                            QUAD
+                        }
                     },
 
-                    // The camera
-                    {
-                        DEFAULT
-                    },
+            // The camera
+            {
 
-                    // Lights
-                    {
-                        DEFAULT
-                    },
+            },
 
-                    // Textures
-                    {
+            // Lights
+            {
 
-                    },
+            },
 
-                    // Setup uniforms in the shader
-                    [](cg::Program& shader)
-                    {
+            // Textures
+            {
 
-                    }
-                }
+            },
+
+            // Setup uniforms in the shader
+            [](cg::Program& shader)
+            {
+                shader.setUniform("iResolution", screen);
+                shader.setUniform("renderMode", mode);
             }
+        }
+    }
         };
 
         pScene = &scene;
@@ -191,7 +203,7 @@ int main(int argc, char** argv)
         while (!glfwWindowShouldClose(pWindow))
         {
             checkForOpenGLError(__FILE__, __LINE__);
-
+            scene.resize((int)screen.x, (int)screen.y);
             scene.render();
 
             glfwSwapBuffers(pWindow);
