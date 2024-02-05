@@ -1,10 +1,10 @@
 /*!*****************************************************************************
 \file unittests_functions.h
 \author Vadim Surov (vsurov\@digipen.edu)
-\co-author YOUR NAME (SIT/DIGIPEN ID/EMAIL)
+\co-author Benjamin Lee (benjaminzhiyuan.lee\@digipen.edu)
 \par Course: CSD2151/CSD2150/CS250
 \par Assignment: 4.1 (BlinnPhong)
-\date 27/11/2023
+\date 03/02/2024
 \brief This file has declarations of functions for unit tests.
 
 This code is intended to be completed and submitted by a student,

@@ -6,7 +6,7 @@
 @section A
 @assignent 
 @date 1/7/2024
-@brief Implementation of assignment 
+@brief Implementation of assignment vertex shader 
 */
 
 R"(
