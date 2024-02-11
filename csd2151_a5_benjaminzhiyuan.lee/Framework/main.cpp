@@ -19,6 +19,7 @@ cg::Scene* pScene = nullptr;
 glm::vec2 screen{ WIDTH, HEIGHT };
 bool lbutton_down = false;
 bool mode_alt = false;
+float reflectFactor{}, refractFactor{};
 
 struct Material
 {
@@ -36,10 +37,30 @@ struct Material
 void keyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mods)
 {
     if (action == GLFW_PRESS)
+    {
         if (key == GLFW_KEY_ESCAPE)
             glfwSetWindowShouldClose(pWindow, GL_TRUE);
-
+        if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9)
+        {
+            // Calculate reflectFactor based on the pressed key
+            float factor = static_cast<float>(key - GLFW_KEY_0) / 36.0f; // Dividing by 36 instead of 9 to map to range [0, 0.25]
+            reflectFactor = std::min(factor, 0.25f); // Ensure reflectFactor doesn't exceed 0.25
+        }
+    }
+       
+    // Check if Alt key is held down
     mode_alt = (mods == GLFW_MOD_ALT);
+
+    if (mode_alt)
+    {
+        // Set refractFactor between 0 and 1
+        if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9)
+        {
+            // Calculate refractFactor based on the pressed key
+            float factor = static_cast<float>(key - GLFW_KEY_0) / 9.0f;
+            refractFactor = factor;
+        }
+    }
 }
 
 /*
@@ -267,7 +288,11 @@ int main(int argc, char** argv)
             },
 
             // Setup uniforms in the shader
-            NULL
+            [](cg::Program& shader)
+            {
+                shader.setUniform("factor", reflectFactor);
+                shader.setUniform("refraction", refractFactor);
+            }
         }
     }
         };

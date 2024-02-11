@@ -108,13 +108,22 @@ uniform Material material;
 
 void pass1() 
 {
-    // Access the cube map texture
-    vec4 color = checkerboardTexture(vec2uv(ReflectDir), 10.0f);
+    // Access the cube map texture for reflection
+    vec4 reflectColor = checkerboardTexture(vec2uv(ReflectDir), 10.0f);
 
-    // Gamma correction
-    color.rgb = pow(color.rgb, vec3(1.0f/2.2f));
+    // Access the cube map texture for refraction
+    vec4 refractColor = checkerboardTexture(vec2uv(RefractDir), 10.0f);
 
-    FragColor = color;
+    // Gamma correction for reflection
+    reflectColor.rgb = pow(reflectColor.rgb, vec3(1.0f/2.2f));
+
+    // Gamma correction for refraction
+    refractColor.rgb = pow(refractColor.rgb, vec3(1.0f/2.2f));
+
+    // Combine reflection and refraction colors (for example, you can use a mix)
+    vec4 finalColor = mix(reflectColor, refractColor,0.5f);
+
+    FragColor = finalColor;
 }
 
 
