@@ -4,9 +4,9 @@
 @co-author Benjamin Lee Zhi Yuan (benjaminzhiyuan.lee@digipen.edu)
 @course CSD2151
 @section A
-@assignent 
-@date 1/7/2024
-@brief Implementation of assignment 
+@assignent 5
+@date 11/2/2024
+@brief Implementation of assignment 5
 */
 #include <iostream>
 
@@ -16,6 +16,16 @@
 #include <GLFW/glfw3.h>
 
 cg::Scene* pScene = nullptr;
+glm::vec2 screen{ WIDTH, HEIGHT };
+bool lbutton_down = false;
+bool mode_alt = false;
+
+struct Material
+{
+    glm::vec4 color;
+    float reflectionFactor; // The light reflection factor
+    float eta;              // The ratio of indices of refraction
+};
 
 /*
    This function serves as the callback parameter for 
@@ -28,6 +38,8 @@ void keyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mod
     if (action == GLFW_PRESS)
         if (key == GLFW_KEY_ESCAPE)
             glfwSetWindowShouldClose(pWindow, GL_TRUE);
+
+    mode_alt = (mods == GLFW_MOD_ALT);
 }
 
 /*
@@ -36,7 +48,13 @@ void keyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mod
 */
 void mouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods)
 {
-
+    if (button == GLFW_MOUSE_BUTTON_LEFT)
+    {
+        if (GLFW_PRESS == action)
+            lbutton_down = true;
+        else if (GLFW_RELEASE == action)
+            lbutton_down = false;
+    }
 }
 
 /*
@@ -45,8 +63,20 @@ void mouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods)
 */
 void cursorPosCallback(GLFWwindow* pWindow, double xpos, double ypos)
 {
+    if (!lbutton_down)
+        return;
+    else
+    {
+        static double oldxpos = xpos;
+        static double oldypos = ypos;
 
+        pScene->camerasOnCursor(xpos - oldxpos, ypos - oldypos, &pScene->shader);
+
+        oldxpos = xpos;
+        oldypos = ypos;
+    }
 }
+    
 
 /*
    This function serves as the callback parameter for
@@ -54,7 +84,7 @@ void cursorPosCallback(GLFWwindow* pWindow, double xpos, double ypos)
 */
 void scrollCallback(GLFWwindow* pWindow, double xoffset, double yoffset)
 {
-
+    pScene->camerasOnScroll(xoffset, yoffset, &pScene->shader);
 }
 
 /*
@@ -63,7 +93,7 @@ void scrollCallback(GLFWwindow* pWindow, double xoffset, double yoffset)
 */
 void sizeCallback(GLFWwindow* pWindow, int width, int height)
 {
-
+    screen = { width, height };
 }
 
 /*
@@ -129,21 +159,27 @@ int main(int argc, char** argv)
 
     try
     {
+        cg::Scene::Texture texture = {
+            { "pisa_posx.hdr", "pisa_negx.hdr",
+              "pisa_posy.hdr", "pisa_negy.hdr",
+              "pisa_posz.hdr", "pisa_negz.hdr"  }
+        };
+
         cg::Scene scene =
         {
             // Vertex shader
             {
-                #include "Framework.vert.glsl"
+                #include "EnvironmentMap.vert.glsl"
             },
 
             // Fragment shader
             {
-                #include "Framework.frag.glsl"
+                #include "EnvironmentMap.frag.glsl"
             },
 
             // Passes
             {
-                // Pass 0
+                // Pass 0 (to render background)
                 {
                     // Rendering target
                     DEFAULT,
@@ -159,31 +195,81 @@ int main(int argc, char** argv)
 
                     // Objects
                     {
-
+                        {
+                           SKYBOX
+                        }
                     },
 
-                    // The camera
+            // The camera
+            {
+                { { 3.0f, 2.0f, 0.0f } }
+            },
+
+            // Lights
+            {
+
+            },
+
+            // Textures
+            {
+                texture
+            },
+
+            // Setup uniforms in the shader
+            NULL
+        },
+
+            // Pass 1 (to render the object)
+            {
+                // Rendering target
+                DEFAULT,
+
+                // Viewport
+                { 0, 0, WIDTH, HEIGHT },
+
+                // Color to clear buffers
+                { },
+
+                // Depth test
+                ENABLE,
+
+                // Objects
+                {
                     {
-                        DEFAULT
+                        SPHERE,
+                        MATERIAL_REFLECT_REFRACT
                     },
-
-                    // Lights
                     {
-                        DEFAULT
+                        CUBE,
+                        MATERIAL_REFLECT_REFRACT,
+                        glm::translate(glm::mat4(1.0f), {0.0f, 0.0f, 4.0f})
                     },
-
-                    // Textures
                     {
-
-                    },
-
-                    // Setup uniforms in the shader
-                    [](cg::Program& shader)
-                    {
-
+                        TORUS,
+                        MATERIAL_REFLECT_REFRACT,
+                        glm::translate(glm::mat4(1.0f), {0.0f, 0.0f, -4.0f})
                     }
-                }
-            }
+                },
+
+            // The camera
+            {
+                { { 3.0f, 2.0f, 0.0f } }
+            },
+
+            // Lights
+            {
+
+            },
+
+            // Textures
+            {
+                texture
+            },
+
+            // Setup uniforms in the shader
+            NULL
+        }
+    }
         };
 
         pScene = &scene;
@@ -191,7 +277,7 @@ int main(int argc, char** argv)
         while (!glfwWindowShouldClose(pWindow))
         {
             checkForOpenGLError(__FILE__, __LINE__);
-
+            scene.resize((int)screen.x, (int)screen.y);
             scene.render();
 
             glfwSwapBuffers(pWindow);

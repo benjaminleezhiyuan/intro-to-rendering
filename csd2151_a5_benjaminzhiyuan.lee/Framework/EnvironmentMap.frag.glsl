@@ -1,31 +1,26 @@
-/*!*****************************************************************************
-\file unittests_functions.cpp
-\author Vadim Surov (vsurov\@digipen.edu)
-\co-author YOUR NAME (DIGIPEN ID)
-\par Course: CSD2151/CSD2150/CS250
-\par Assignment: 5.1 (Environment Mapping)
-\date 02/06/2022 (MM/DD/YYYY)
-\brief This file has definitions of functions for unit tests.
-
-This code is intended to be completed and submitted by a student,
-so any changes in this file will be used in the evaluation on the VPL server.
-You should not change functions' name and parameter types in provided code.
-*******************************************************************************/
-
-#include "unittests_functions.h"
-
-
-template<typename T>
-T floor(T a) { return glm::floor(a); }
-
-template<typename T>
-T mod(T a, T b) { return glm::mod(a, b); }
-
-#define UNUSED(x) (void)x;
-
-/*
-    Read specs for Assignment 5.1
+/*!
+@file 
+@author Vadim Surov (vsurov@digipen.edu)
+@co-author Benjamin Lee Zhi Yuan (benjaminzhiyuan.lee@digipen.edu)
+@course CSD2151
+@section A
+@assignent 5
+@date 11/2/2024
+@brief Implementation of assignment fragment shader
 */
+
+R"(
+#version 420
+
+// Material properties for reflection and refraction
+struct Material 
+{
+    vec4 color;             
+    float reflectionFactor; // The light reflection factor
+    float eta;              // The ratio of indices of refraction
+};
+
+
 vec4 checkerboardTexture(vec2 uv, float size)
 {
     // Calculate the position within the checkerboard texture
@@ -47,9 +42,6 @@ vec4 checkerboardTexture(vec2 uv, float size)
 }
 
 
-/*
-    Read specs for Assignment 5.1
-*/
 vec2 vec2uv(vec3 v) {
     // Take the absolute value of v
     vec3 absolute_v = abs(v);
@@ -59,7 +51,7 @@ vec2 vec2uv(vec3 v) {
     if (v.x >= absolute_v.y && v.x >= absolute_v.z) {
         // Right face
         uv = vec2(-v.z, -v.y) / v.x / 2.0f + 0.5f;
-        uv.x = uv.x - 1.f;
+        uv.x = 1.0f - uv.x;
         uv.y = 1.0f - uv.y;
     }
     else if (absolute_v.x > absolute_v.y && absolute_v.x > absolute_v.z) {
@@ -84,4 +76,51 @@ vec2 vec2uv(vec3 v) {
     return uv;
 }
 
+uniform int Pass; // Pass number
 
+layout(binding=0) uniform samplerCube CubeMapTex;
+
+layout(location=0) out vec4 FragColor;
+
+
+// Pass 0
+
+in vec3 Vec;
+
+
+void pass0() 
+{
+    // Access the cube map texture
+    vec4 color = checkerboardTexture(vec2uv(Vec), 8.0f);
+
+    // Gamma correction
+    color.rgb = pow(color.rgb, vec3(1.0f/2.2f));
+
+    FragColor = color;
+}
+
+// Pass 1
+
+in vec3 ReflectDir;
+in vec3 RefractDir;
+
+uniform Material material;
+
+void pass1() 
+{
+    // Access the cube map texture
+    vec4 color = checkerboardTexture(vec2uv(ReflectDir), 10.0f);
+
+    // Gamma correction
+    color.rgb = pow(color.rgb, vec3(1.0f/2.2f));
+
+    FragColor = color;
+}
+
+
+void main()
+{
+    if      (Pass==0) pass0();
+    else if (Pass==1) pass1();
+}
+)"
