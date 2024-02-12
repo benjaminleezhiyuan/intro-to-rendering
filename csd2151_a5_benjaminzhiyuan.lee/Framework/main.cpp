@@ -19,7 +19,7 @@ cg::Scene* pScene = nullptr;
 glm::vec2 screen{ WIDTH, HEIGHT };
 bool lbutton_down = false;
 bool mode_alt = false;
-float reflectFactor{}, refractFactor{};
+float reflectFactor = 1.0f, refractFactor = 1.f;
 
 struct Material
 {
@@ -40,27 +40,31 @@ void keyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mod
     {
         if (key == GLFW_KEY_ESCAPE)
             glfwSetWindowShouldClose(pWindow, GL_TRUE);
-        if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9)
+        else if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9)
         {
             // Calculate reflectFactor based on the pressed key
-            float factor = static_cast<float>(key - GLFW_KEY_0) / 36.0f; // Dividing by 36 instead of 9 to map to range [0, 0.25]
-            reflectFactor = std::min(factor, 0.25f); // Ensure reflectFactor doesn't exceed 0.25
+            float factor = static_cast<float>(key - GLFW_KEY_0) * 0.1111f + 0.1f; // Scaling and shifting to map to range [0.1, 1.0]
+            reflectFactor = std::min(std::max(factor, 0.1f), 1.0f); // Ensure reflectFactor is within range [0.1, 1.0]
         }
     }
-       
+
+
     // Check if Alt key is held down
     mode_alt = (mods == GLFW_MOD_ALT);
 
     if (mode_alt)
     {
-        // Set refractFactor between 0 and 1
+        // Set refractFactor between 0.5 and 2.5
         if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9)
         {
             // Calculate refractFactor based on the pressed key
-            float factor = static_cast<float>(key - GLFW_KEY_0) / 9.0f;
-            refractFactor = factor;
+            float factor = static_cast<float>(key - GLFW_KEY_0) * 0.25f + 0.5f; // Scaling and shifting to map to range [0.5, 2.5]
+            refractFactor = std::min(std::max(factor, 0.5f), 2.5f); // Ensure refractFactor is within range [0.5, 2.5]
         }
     }
+
+
+
 }
 
 /*

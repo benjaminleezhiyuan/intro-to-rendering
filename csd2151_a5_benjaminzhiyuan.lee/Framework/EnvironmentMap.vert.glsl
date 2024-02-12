@@ -49,7 +49,6 @@ layout(location=1) in vec3 VertexNormal;
 
 uniform Camera camera;
 uniform Material material;
-uniform float factor;
 uniform float refraction;
 
 out vec3 ReflectDir;
@@ -59,30 +58,14 @@ void pass1()
 {
     vec3 viewDirection = normalize(camera.position - VertexPosition);
     vec3 normal = normalize(VertexNormal);
-    
+
     // Calculate the reflection direction
-    ReflectDir = reflect(viewDirection, normal);
+    ReflectDir = reflect(-viewDirection, normal);
 
-    // Blend between the reflection direction and view direction based on reflectionFactor
-    vec3 blendedDirection = mix(viewDirection, ReflectDir, factor);
+    // Calculate the refraction direction (using Snell's Law)
+    RefractDir = refract(-viewDirection, normal, 1.f / refraction);
 
-    // Set the blended direction as the final reflection direction
-    ReflectDir = normalize(blendedDirection);
-
-    // Calculate the refraction direction using Schlick's approximation
-    float cosTheta = dot(-viewDirection, normal);
-    float eta = refraction; // Refractive index of the material
-    float F0 = pow((1.0 - eta) / (1.0 + eta), 2.0);
-    float F = F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0); // Fresnel factor
-
-    vec3 refractDirection = refract(viewDirection, normal, eta);
-
-    // Use Schlick's approximation to blend between reflection and refraction
-    vec3 finalDirection = mix(refractDirection, ReflectDir, F);
-
-    // Set the final refraction direction
-    RefractDir = normalize(finalDirection);
-  
+    // Compute the position of the vertex in clip space
     gl_Position = P * V * M * vec4(VertexPosition, 1.0f);
 }
 

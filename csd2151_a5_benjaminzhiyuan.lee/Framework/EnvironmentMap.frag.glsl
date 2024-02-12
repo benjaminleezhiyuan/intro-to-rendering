@@ -105,6 +105,8 @@ in vec3 ReflectDir;
 in vec3 RefractDir;
 
 uniform Material material;
+uniform float factor;
+
 
 void pass1() 
 {
@@ -121,7 +123,7 @@ void pass1()
     refractColor.rgb = pow(refractColor.rgb, vec3(1.0f/2.2f));
 
     // Combine reflection and refraction colors (for example, you can use a mix)
-    vec4 finalColor = mix(reflectColor, refractColor,0.5f);
+    vec4 finalColor = mix(reflectColor, refractColor,factor);
 
     FragColor = finalColor;
 }
