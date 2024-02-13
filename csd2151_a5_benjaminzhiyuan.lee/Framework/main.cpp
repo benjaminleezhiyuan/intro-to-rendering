@@ -41,23 +41,27 @@ void keyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mod
         if (key == GLFW_KEY_ESCAPE)
             glfwSetWindowShouldClose(pWindow, GL_TRUE);
 
-        if (mode_alt)
-        {
-            // Set refractFactor between 0.5 and 2.5
-            if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9)
-            {
-                // Calculate refractFactor based on the pressed key
-                float factor = static_cast<float>(key - GLFW_KEY_0) * 0.25f + 0.5f; // Scaling and shifting to map to range [0.5, 2.5]
-                refractFactor = std::min(std::max(factor, 0.5f), 2.5f); // Ensure refractFactor is within range [0.5, 2.5]
-            }
-        }
+        //======================
+        // NOT USED \\\\\\\\\\\\
+        //======================
 
-        else if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9)
-        {
-            // Calculate reflectFactor based on the pressed key
-            float factor = static_cast<float>(key - GLFW_KEY_0) * 0.1111f + 0.1f; // Scaling and shifting to map to range [0.1, 1.0]
-            reflectFactor = std::min(std::max(factor, 0.1f), 1.0f); // Ensure reflectFactor is within range [0.1, 1.0]
-        }
+        //if (mode_alt)
+        //{
+        //    // Set refractFactor between 0.5 and 2.5
+        //    if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9)
+        //    {
+        //        // Calculate refractFactor based on the pressed key
+        //        float factor = static_cast<float>(key - GLFW_KEY_0) * 0.25f + 0.5f; // Scaling and shifting to map to range [0.5, 2.5]
+        //        refractFactor = std::min(std::max(factor, 0.5f), 2.5f); // Ensure refractFactor is within range [0.5, 2.5]
+        //    }
+        //}
+
+        //else if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9)
+        //{
+        //    // Calculate reflectFactor based on the pressed key
+        //    float factor = static_cast<float>(key - GLFW_KEY_0) * 0.1111f + 0.1f; // Scaling and shifting to map to range [0.1, 1.0]
+        //    reflectFactor = std::min(std::max(factor, 0.1f), 1.0f); // Ensure reflectFactor is within range [0.1, 1.0]
+        //}
         
     }
 
@@ -220,7 +224,7 @@ int main(int argc, char** argv)
 
             // The camera
             {
-                { { 3.0f, 0.0f, 0.0f } }
+                { { 12.0f, 0.0f, 0.0f } }
             },
 
             // Lights
@@ -271,7 +275,7 @@ int main(int argc, char** argv)
 
             // The camera
             {
-                { { 3.0f, 0.0f, 0.0f } }
+                { { 12.0f, 0.0f, 0.0f } }
             },
 
             // Lights

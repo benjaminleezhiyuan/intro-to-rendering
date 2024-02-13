@@ -123,7 +123,7 @@ void pass1()
     refractColor.rgb = pow(refractColor.rgb, vec3(1.0f/2.2f));
 
     // Combine reflection and refraction colors (for example, you can use a mix)
-    vec4 finalColor = mix(reflectColor, refractColor, factor);
+    vec4 finalColor = mix(reflectColor, refractColor, material.reflectionFactor);
 
     FragColor = finalColor;
 }

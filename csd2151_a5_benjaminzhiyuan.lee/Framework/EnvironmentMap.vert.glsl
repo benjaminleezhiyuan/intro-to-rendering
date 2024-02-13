@@ -63,7 +63,7 @@ void pass1()
     ReflectDir = reflect(viewDirection, normal);
 
     // Calculate the refraction direction (using Snell's Law)
-    RefractDir = refract(-viewDirection, normal, 1.f/refraction);
+    RefractDir = refract(-viewDirection, normal, material.eta);
 
     // Compute the position of the vertex in clip space
     gl_Position = P * V * M * vec4(VertexPosition, 1.0f);
