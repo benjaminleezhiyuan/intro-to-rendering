@@ -35,7 +35,7 @@ namespace cg
         {\
             { "material.color", { 0.5f, 0.5f, 0.5f, 1.0f } },\
             { "material.reflectionFactor", { 0.9f } },\
-            { "material.eta", { 0.94f } } \
+            { "material.eta", { 0.9f } } \
         }
 
     #define MATERIAL_PBR  \

@@ -91,7 +91,7 @@ in vec3 Vec;
 void pass0() 
 {
     // Access the cube map texture
-    vec4 color = checkerboardTexture(vec2uv(Vec), 8.0f);
+    vec4 color = checkerboardTexture(vec2uv(Vec), 10.0f);
 
     // Gamma correction
     color.rgb = pow(color.rgb, vec3(1.0f/2.2f));
@@ -123,7 +123,7 @@ void pass1()
     refractColor.rgb = pow(refractColor.rgb, vec3(1.0f/2.2f));
 
     // Combine reflection and refraction colors (for example, you can use a mix)
-    vec4 finalColor = mix(reflectColor, refractColor,factor);
+    vec4 finalColor = mix(reflectColor, refractColor, factor);
 
     FragColor = finalColor;
 }
