@@ -1,13 +1,13 @@
-/*!
-@file main.cpp
-@author Vadim Surov (vsurov@digipen.edu)
-@co-author Benjamin Lee Zhi Yuan (benjaminzhiyuan.lee@digipen.edu)
-@course CSD2151
-@section A
-@assignent 
-@date 1/7/2024
-@brief Implementation of assignment 
-*/
+/*!*****************************************************************************
+\file main.cpp
+\author Vadim Surov (vsurov\@digipen.edu)
+\co-author Benjamin lee (benjaminzhiyuan.lee\@digipen.edu)
+\par Course: CSD2151/CSD2150/CS250
+\par Assignment:
+\date 02/02/2024 (MM/DD/YYYY)
+\brief This file has definitions of the main function
+       along with global variables and sub-functions used in main.
+*******************************************************************************/
 #include <iostream>
 
 #include "common/debug.h"
