@@ -153,6 +153,29 @@ vec3 microfacetModel(vec3 position, vec3 n, Light light, Material material)
     return (diffuseBrdf + PI * specBrdf) * lightI * nDotL;
 }
 
+vec3 microfacetModelCartoon(vec3 position, vec3 n, Light light, Material material) 
+{  
+    vec3 diffuseBrdf = material.color;
+
+    vec3 lightI = light.L;
+    vec3 lightPositionInView = (V * vec4(light.position, 1.0f)).xyz;
+
+    vec3 l = lightPositionInView - position;
+    float dist = length(l);
+    l = normalize(l);
+    lightI *= 100 / (dist * dist); // Intensity is normalized, so scale up by 100 first
+
+    vec3 v = normalize(-position);
+    vec3 h = normalize(v + l);
+    float nDotH = dot(n, h);
+    float lDotH = dot(l, h);
+    float nDotL = max(dot(n, l), 0.0f);
+    float nDotV = dot(n, v);
+    vec3 specBrdf = 0.f * schlickFresnel(lDotH);
+
+    return (diffuseBrdf + PI * specBrdf) * nDotL;
+}
+
 
 float cartoon(float value)
 {
@@ -163,12 +186,9 @@ float cartoon(float value)
 
 vec3 pbrCartoon(vec3 position, vec3 n, Light light, Material material) 
 {  
-    // Increase roughness
-    material.rough = 0.1f /* your desired roughness value */;
-    material.metal = 0.f;
-    
+
     // Call the microfacetModel function to calculate the lighting without the cartoon effect
-    vec3 pbrColor = microfacetModel(position, n, light, material);
+    vec3 pbrColor = microfacetModelCartoon(position, n, light, material);
 
     // Apply cartoon effect to the result
     float cartoonR = cartoon(pbrColor.r);
