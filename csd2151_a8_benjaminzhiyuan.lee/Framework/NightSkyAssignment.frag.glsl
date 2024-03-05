@@ -161,33 +161,23 @@ float cartoon(float value)
     return floor(value * levels) * scaleFactor;
 }
 
-vec3 blinnPhongCartoon(vec3 position, vec3 n, Light light, Material material)
-{
-    vec3 viewDir = normalize(-position); // Assuming position is the position of the viewer/camera
+vec3 pbrCartoon(vec3 position, vec3 n, Light light, Material material) 
+{  
+    // Increase roughness
+    material.rough = 0.1f /* your desired roughness value */;
+    material.metal = 0.f;
+    
+    // Call the microfacetModel function to calculate the lighting without the cartoon effect
+    vec3 pbrColor = microfacetModel(position, n, light, material);
 
-    // Calculate halfway vector
-    vec3 h = normalize(light.position - position + viewDir);
+    // Apply cartoon effect to the result
+    float cartoonR = cartoon(pbrColor.r);
+    float cartoonG = cartoon(pbrColor.g);
+    float cartoonB = cartoon(pbrColor.b);
 
-    // Calculate dot products
-    float sDotN = max(dot(light.position, n), 0.0);
-    float sDotH = max(dot(h, n), 0.0);
-
-    // Cartoon effect applied to dot products
-    float cartoonSDotN = cartoon(sDotN);
-    float cartoonSDotH = cartoon(pow(sDotH, material.shininess));
-
-    // Ambient component
-    vec3 ambient = light.La * material.Ka;
-
-    // Diffuse component
-    vec3 diffuse = light.Ld * material.Kd * cartoonSDotN;
-
-    // Specular component
-    vec3 spec = light.Ls * material.Ks * cartoonSDotH;
-
-    return ambient + diffuse + spec;
+    // Return the cartoonized color
+    return vec3(cartoonR, cartoonG, cartoonB);
 }
-
 
 layout(binding=0) uniform samplerCube CubeMapTex;
 // Pass 0
@@ -220,7 +210,7 @@ void pass1()
             break;
 
         case 2: // Cartoon
-            color = blinnPhongCartoon(ViewPosition, normalize(Normal), light[0], material);
+            color = pbrCartoon(ViewPosition, normalize(Normal), light[0], material);
             break;
 
         case 3: // Checkerboard texture
