@@ -34,11 +34,5 @@
   <ItemGroup>
     <None Include="OgresAssignment.frag.glsl" />
     <None Include="OgresAssignment.vert.glsl" />
-    <None Include="DeferredShading.frag.glsl">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="DeferredShading.vert.glsl">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

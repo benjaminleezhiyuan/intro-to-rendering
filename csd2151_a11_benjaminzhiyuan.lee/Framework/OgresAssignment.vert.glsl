@@ -37,29 +37,11 @@ uniform mat4 P; // Projection transform matrix
 
 out vec3 Position;
 out vec3 Normal;
-
-void pass0()
-{
-    // Get the position and normal in view space
-    mat4 MV = V * M;
-    mat3 N = mat3(vec3(MV[0]), vec3(MV[1]), vec3(MV[2])); // Normal transform matrix
-    vec3 VertexNormalInView = normalize(N * VertexNormal);
-    vec4 VertexPositionInView = MV * vec4(VertexPosition, 1.0f);
-    
-    Position = VertexPositionInView.xyz;
-    Normal = VertexNormalInView;
-
-    gl_Position = P * VertexPositionInView;
-}
-
-
-// Pass 1
-
 out vec3 LightDir;
 out vec3 ViewDir;
 out vec2 TexCoord;
 
-void pass1()
+void pass0()
 {
     mat4 MV = V * M;
     mat3 N = mat3(vec3(MV[0]), vec3(MV[1]), vec3(MV[2])); // Normal transform matrix
@@ -81,6 +63,14 @@ void pass1()
     ViewDir = toTangentSpace * normalize(-vertexPositionInView);
     TexCoord = VertexTexCoord;
     gl_Position = P * MV * vec4(VertexPosition, 1.0f);
+
+}
+
+// Pass 1
+void pass1()
+{
+    TexCoord = VertexTexCoord; 
+    gl_Position = P * V * M * vec4(VertexPosition, 1.0f);
 }
 
 void main()
